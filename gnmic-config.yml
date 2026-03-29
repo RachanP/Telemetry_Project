@@ -1,0 +1,105 @@
+# ============================================================
+#  แก้เฉพาะ section [targets] เมื่อเปลี่ยนเครื่อง SONiC
+#  ค่า address / username / password ต้องตรงกับ .env
+# ============================================================
+
+targets:
+  switch1:                          # ← ชื่อนี้ต้องตรงกับ SWITCH_NAME ใน .env
+    address: 192.168.1.11:8080      # ← SWITCH_IP:SWITCH_PORT
+    username: admin                 # ← SWITCH_USER
+    password: YourPaSsWoRd         # ← SWITCH_PASS
+    insecure: true
+
+processors:
+  convert-counters:
+    event-convert:
+      value-names:
+        - "in-octets"
+        - "out-octets"
+        - "in-pkts"
+        - "out-pkts"
+        - "in-unicast-pkts"
+        - "out-unicast-pkts"
+        - "in-broadcast-pkts"
+        - "out-broadcast-pkts"
+        - "in-multicast-pkts"
+        - "out-multicast-pkts"
+        - "in-discards"
+        - "out-discards"
+        - "in-errors"
+        - "out-errors"
+        - "mtu"
+      type: int
+
+subscriptions:
+  all-interfaces:
+    target: "openconfig"
+    paths:
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet0]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet1]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet2]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet3]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet4]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet5]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet6]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet7]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet8]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet9]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet10]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet11]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet12]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet13]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet14]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet15]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet16]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet17]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet18]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet19]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet20]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet21]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet22]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet23]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet24]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet25]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet26]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet27]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet28]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet29]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet30]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet31]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet32]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet33]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet34]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet35]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet36]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet37]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet38]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet39]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet40]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet41]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet42]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet43]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet44]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet45]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet46]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet47]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet48]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet49]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet50]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet51]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet52]/state"
+      - "/openconfig-interfaces:interfaces/interface[name=Ethernet53]/state"
+    mode: stream
+    stream-mode: sample
+    sample-interval: 20s            # ← GNMI_SAMPLE_INTERVAL ใน .env
+    encoding: json_ietf
+
+outputs:
+  output-prom:
+    type: prometheus
+    listen: :9804                   # ← GNMI_EXPORTER_PORT ใน .env
+    metric-prefix: sonic_
+    strings-as-labels: true
+    expiration: 5m
+    event-processors:
+      - convert-counters
